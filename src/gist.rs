@@ -1,4 +1,4 @@
-use serde_json;
+use serde_json::{self, from_str};
 
 use crate::config::Config;
 use crate::gist_file::GistFile;
@@ -30,6 +30,11 @@ pub struct Gist {
 
     #[serde(skip_serializing_if = "Option::is_none")]
     description: Option<String>,
+}
+
+#[derive(Deserialize, Serialize)]
+pub struct GistCreate {
+    pub url: String,
 }
 
 impl Gist {
@@ -78,7 +83,7 @@ impl Gist {
     }
 
     // Send a new Gist to Github.
-    pub fn create(&mut self) -> Result<String> {
+    pub fn create(&mut self) -> Result<GistCreate> {
         let url = self.api.clone() + "/gists";
         let resp = ureq::post(&url)
             .set("Authorization", &self.auth_header())
@@ -87,7 +92,7 @@ impl Gist {
             .set("Content-Type", CONTENT_TYPE)
             .send_json(self.to_json()?);
         match resp {
-            Ok(response) => Ok(response.into_string()?),
+            Ok(response) => Ok(from_str::<GistCreate>(&response.into_string()?)?),
             Err(ureq::Error::Status(code, response)) => Err(anyhow!(
                 "Error posting gist: ({}) {}",
                 code,

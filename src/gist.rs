@@ -142,7 +142,7 @@ mod tests {
     use crate::gist_file::GistFile;
 
     fn fake_gist_file(name: &str, content: Option<&str>) -> GistFile {
-        let mut f = GistFile::new(name.to_string());
+        let mut f = GistFile::new(name.to_string(), "".to_string());
         if content.is_some() {
             f.content = content.unwrap().to_string();
         }

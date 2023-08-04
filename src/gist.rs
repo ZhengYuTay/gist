@@ -35,6 +35,7 @@ pub struct Gist {
 #[derive(Deserialize, Serialize)]
 pub struct GistCreate {
     pub url: String,
+    pub html_url: String,
 }
 
 impl Gist {
